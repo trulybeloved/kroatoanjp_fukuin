@@ -8,6 +8,7 @@ from typing import Optional
 from dotenv import load_dotenv
 import inquirer
 
+
 from preprocess.nlp_mtl_preprocess import NLP_MTL_Preprocess
 from preprocess.mtl_preprocess import MTL_Preprocess
 from preprocess.tokenizer.fugashi_tokenizer import FugashiTokenizer
@@ -69,7 +70,7 @@ def out_filename_generator(in_filename):
     return f'{p}-rep{e}'
 
 def load_replacement_table(filename):
-    with open(filename, "r") as replacement_json_file:
+    with open(filename, "r", encoding='utf-8') as replacement_json_file:
         replacement_table = json.loads(replacement_json_file.read())
     return replacement_table
 
@@ -122,7 +123,7 @@ def run_basic_mtl_preprocessor(args):
     print(f'Output written to: {out_filename}')
 
 def run_nlp_mtl_preprocessor(args):
-    with open(args.input_file, "r") as input_file:
+    with open(args.input_file, "r", encoding='utf-8') as input_file:
         text = input_file.read()
     env_config = PreprocessorEnvConfig.read_env()
     if env_config.tokenizer == "fugashi":

@@ -10,7 +10,7 @@ KATAKANA_WORDS_FILE = "data/katakana_words.txt"
 class BasicNamedEntityRecognizer(NamedEntityRecognizer):
     def __init__(self):
         self._katakana_words = set()
-        with open(KATAKANA_WORDS_FILE) as infile:
+        with open(KATAKANA_WORDS_FILE, 'r', encoding='utf-8') as infile:
             for row in infile:
                 word = row.strip()
                 if not is_katakana(word):

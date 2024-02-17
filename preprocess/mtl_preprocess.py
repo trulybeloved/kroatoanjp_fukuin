@@ -19,17 +19,11 @@
 #   Output      #   File with same name as the input file + "-rep", having had the replacements according to
 #                   the Json. It should now be ready to be used in DeepL. 
 
-import re
-import sys
-import json
-import os
 import time
 
 from enum import Flag
 from collections import namedtuple
 import itertools
-
-
 
 class Names(Flag):
     NONE = 0

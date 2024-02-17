@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 
-import re
-import sys
-import json
-import os
 import time
 
 from enum import Flag
