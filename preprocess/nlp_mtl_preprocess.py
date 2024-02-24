@@ -240,7 +240,7 @@ class NLP_MTL_Preprocess:
 
     def replace(self) -> str:
         replaced_names = dict()
-        time_start = time.time()
+        # time_start = time.time()
         prev_rule = None
         for rule in NLP_MTL_Preprocess.rules:
             prev_count = self.total_replacements
@@ -286,7 +286,7 @@ class NLP_MTL_Preprocess:
             prev_rule = rule
             self._log(f'  SubTotal: {self.total_replacements-prev_count}')
 
-        time_end = time.time()
-        print(f'Total Replacements: {self.total_replacements}')
-        print(f'Time Taken: {time_end-time_start} seconds')
+        # time_end = time.time()
+        # print(f'Total Replacements: {self.total_replacements}')
+        # print(f'Time Taken: {time_end-time_start} seconds')
         return self.text
