@@ -6,10 +6,10 @@ from typing import Optional, List
 
 from sudachipy import tokenizer, dictionary
 
-from preprocess.tokenizer.tokenizer import Tokenizer
-from preprocess.sentence import Word
-from preprocess.tokenizer.part_of_speech import PartOfSpeech
-from preprocess.utils import is_punctuation
+from nlp_modules.kroatoanjp_fukuin.preprocess.tokenizer.tokenizer import Tokenizer
+from nlp_modules.kroatoanjp_fukuin.preprocess.sentence import Word
+from nlp_modules.kroatoanjp_fukuin.preprocess.tokenizer.part_of_speech import PartOfSpeech
+from nlp_modules.kroatoanjp_fukuin.preprocess.utils import is_punctuation
 
 class SudachiTokenizer(Tokenizer):
     def __init__(

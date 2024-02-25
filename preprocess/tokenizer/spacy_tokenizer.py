@@ -1,17 +1,13 @@
-import os
-import os.path
-import json
-from tempfile import NamedTemporaryFile
 from typing import Optional, List
 
 import spacy
 import sudachipy.tokenizer
 from sudachipy import dictionary
 
-from preprocess.tokenizer.sudachi_tokenizer import SudachiTokenizer
-from preprocess.sentence import Word
-from preprocess.tokenizer.part_of_speech import PartOfSpeech
-from preprocess.utils import is_punctuation
+from nlp_modules.kroatoanjp_fukuin.preprocess.tokenizer.sudachi_tokenizer import SudachiTokenizer
+from nlp_modules.kroatoanjp_fukuin.preprocess.sentence import Word
+from nlp_modules.kroatoanjp_fukuin.preprocess.tokenizer.part_of_speech import PartOfSpeech
+from nlp_modules.kroatoanjp_fukuin.preprocess.utils import is_punctuation
 
 # spaCy (https://spacy.io/) uses Sudachi for tokenization for its JP
 # NLP processing pipelines. As a result, we can use user dictionaries

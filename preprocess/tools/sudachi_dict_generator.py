@@ -2,8 +2,8 @@ import datetime
 import os
 import subprocess
 
-from preprocess.nlp_mtl_preprocess import NLP_MTL_Preprocess
-from preprocess.utils import is_katakana
+from nlp_modules.kroatoanjp_fukuin.preprocess.nlp_mtl_preprocess import NLP_MTL_Preprocess
+from nlp_modules.kroatoanjp_fukuin.preprocess.utils import is_katakana
 
 DICT_CSV_FOLDER = "generated-sudachi-dict-csv"
 DICT_OUTPUT_FOLDER = "data/dictionaries"

@@ -6,9 +6,9 @@ from enum import Flag
 from typing import NamedTuple, Optional, List
 import itertools
 
-from preprocess.tagger import Tagger
-from preprocess.tokenizer.part_of_speech import PartOfSpeech
-from preprocess.sentence import Word
+from nlp_modules.kroatoanjp_fukuin.preprocess.tagger import Tagger
+from nlp_modules.kroatoanjp_fukuin.preprocess.tokenizer.part_of_speech import PartOfSpeech
+from nlp_modules.kroatoanjp_fukuin.preprocess.sentence import Word
 
 # Bitwise flags for parts of names. The __contains__ operation for 
 # members is defined such that A.__contains__(B) is True if A has

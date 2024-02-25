@@ -2,9 +2,9 @@ from typing import Optional, List
 
 import fugashi
 
-from preprocess.tokenizer.tokenizer import Tokenizer
-from preprocess.sentence import Word
-from preprocess.tokenizer.part_of_speech import PartOfSpeech
+from nlp_modules.kroatoanjp_fukuin.preprocess.tokenizer.tokenizer import Tokenizer
+from nlp_modules.kroatoanjp_fukuin.preprocess.sentence import Word
+from nlp_modules.kroatoanjp_fukuin.preprocess.tokenizer.part_of_speech import PartOfSpeech
 
 class FugashiTokenizer(Tokenizer):
     def __init__(

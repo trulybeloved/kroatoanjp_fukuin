@@ -2,11 +2,11 @@ from difflib import SequenceMatcher
 import re
 from typing import Optional, Iterable, List
 
-from preprocess.tokenizer.tokenizer import Tokenizer
-from preprocess.ner.basic_named_entity_recognizer import BasicNamedEntityRecognizer
-from preprocess.sentence import Sentence, Word
-from preprocess.tokenizer.part_of_speech import PartOfSpeech
-from preprocess.utils import sort_list_by_string_length
+from nlp_modules.kroatoanjp_fukuin.preprocess.tokenizer.tokenizer import Tokenizer
+from nlp_modules.kroatoanjp_fukuin.preprocess.ner.basic_named_entity_recognizer import BasicNamedEntityRecognizer
+from nlp_modules.kroatoanjp_fukuin.preprocess.sentence import Sentence, Word
+from nlp_modules.kroatoanjp_fukuin.preprocess.tokenizer.part_of_speech import PartOfSpeech
+from nlp_modules.kroatoanjp_fukuin.preprocess.utils import sort_list_by_string_length
 
 
 class Tagger:

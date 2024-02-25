@@ -1,6 +1,6 @@
 from typing import Set
 
-from preprocess.sentence import Word, Sentence
+from nlp_modules.kroatoanjp_fukuin.preprocess.sentence import Word, Sentence
 
 class NamedEntityRecognizer:
     def is_name(self, value:str) -> bool:

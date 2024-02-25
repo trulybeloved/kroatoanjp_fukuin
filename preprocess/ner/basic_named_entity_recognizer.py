@@ -2,9 +2,9 @@
 # character checking to identify likely words. Might be replaced
 # with a dedicated NER library in the future.
 
-from preprocess.ner.named_entity_recognizer import NamedEntityRecognizer
-from preprocess.utils import is_katakana
-from preprocess.fukuin_config import FukuinConfig
+from nlp_modules.kroatoanjp_fukuin.preprocess.ner.named_entity_recognizer import NamedEntityRecognizer
+from nlp_modules.kroatoanjp_fukuin.preprocess.utils import is_katakana
+from nlp_modules.kroatoanjp_fukuin.preprocess.fukuin_config import FukuinConfig
 
 KATAKANA_WORDS_FILE = FukuinConfig.katakana_words_file_path
 

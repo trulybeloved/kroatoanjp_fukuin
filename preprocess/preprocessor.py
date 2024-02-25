@@ -3,22 +3,22 @@
 import json
 import typing
 
-from preprocess.nlp_mtl_preprocess import NLP_MTL_Preprocess
-from preprocess.mtl_preprocess import MTL_Preprocess
-from preprocess.tokenizer.fugashi_tokenizer import FugashiTokenizer
-from preprocess.tokenizer.sudachi_tokenizer import SudachiTokenizer
-from preprocess.tokenizer.spacy_tokenizer import SpacyTokenizer
-from preprocess.tagger import Tagger
-from preprocess.tools.mecab_dict_generator import MecabDictGenerator
-from preprocess.tools.sudachi_dict_generator import SudachiDictGenerator
-from preprocess.fukuin_config import FukuinConfig
-
+from nlp_modules.kroatoanjp_fukuin.preprocess.nlp_mtl_preprocess import (NLP_MTL_Preprocess)
+from nlp_modules.kroatoanjp_fukuin.preprocess.mtl_preprocess import MTL_Preprocess
+from nlp_modules.kroatoanjp_fukuin.preprocess.tokenizer.fugashi_tokenizer import FugashiTokenizer
+from nlp_modules.kroatoanjp_fukuin.preprocess.tokenizer.sudachi_tokenizer import SudachiTokenizer
+from nlp_modules.kroatoanjp_fukuin.preprocess.tokenizer.spacy_tokenizer import SpacyTokenizer
+from nlp_modules.kroatoanjp_fukuin.preprocess.tagger import Tagger
+from nlp_modules.kroatoanjp_fukuin.preprocess.tools.mecab_dict_generator import MecabDictGenerator
+from nlp_modules.kroatoanjp_fukuin.preprocess.tools.sudachi_dict_generator import SudachiDictGenerator
+from nlp_modules.kroatoanjp_fukuin.preprocess.fukuin_config import FukuinConfig
 
 
 def load_replacement_table(filename):
     with open(filename, "r", encoding='utf-8') as replacement_json_file:
         replacement_table = json.loads(replacement_json_file.read())
     return replacement_table
+
 
 def run_basic_mtl_preprocessor(input_string: str, path_to_replacements_table: str) -> str:
     preprocess = MTL_Preprocess(
@@ -29,6 +29,7 @@ def run_basic_mtl_preprocessor(input_string: str, path_to_replacements_table: st
     )
     preprocessed_text = preprocess.replace()
     return preprocessed_text
+
 
 def run_nlp_mtl_preprocessor(
         input_string: str,
@@ -72,6 +73,7 @@ def run_nlp_mtl_preprocessor(
 
     return preprocessed_text
 
+
 def build_mecab_dict(args):
     replacement_table = load_replacement_table(args.replacement_json)
     dict_generator = MecabDictGenerator(
@@ -80,6 +82,7 @@ def build_mecab_dict(args):
         replacement_table=replacement_table
     )
     dict_generator.generate()
+
 
 def build_sudachi_dict(args):
     replacement_table = load_replacement_table(args.replacement_json)
