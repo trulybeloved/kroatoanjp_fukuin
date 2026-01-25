@@ -59,6 +59,24 @@ Once setup is complete, preprocessing chapters is relatively simple
 python3 -m preprocess.preprocessor nlp run ch100.txt
 ```
 
+### API Usage
+
+You can also run the preprocessor as a REST API using FastAPI.
+
+#### Start the API Server
+
+```bash
+uvicorn api.main:app --host 0.0.0.0 --port 8000
+```
+
+#### Endpoints
+
+- **GET `/health`**: Check if the server is running.
+- **POST `/preprocess/basic`**: Simple replacement.
+- **POST `/preprocess/nlp`**: Tokenization-aware replacement.
+
+Interactive documentation is available at `http://localhost:8000/docs` once the server is started.
+
 ### Custom Dictionary Usage
 Although their default tokenization is mostly accurate, Fugashi, Sudachi, etc. struggle with separating unknown katakana sequences. Since these most frequently occur in katakana character names, the accuracy of tokenization can be improved by adding these names to a user dictionary.
 
