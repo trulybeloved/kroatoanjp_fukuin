@@ -50,7 +50,7 @@ def test_nlp():
                 "さん": "san"
             }
         },
-        "tokenizer": "sudachi", # Sudachi is lighter than spacy for a quick test
+        "tokenizer": "spacy", 
         "use_single_kanji_filter": False,
         "verbose": True
     }
