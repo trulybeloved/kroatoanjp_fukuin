@@ -1,0 +1,14 @@
+.git
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.db
+.env
+.idea
+.vscode
+*.txt-rep
+benchmarks/
+preprocess/tests/
+api/test_api_manual.py
