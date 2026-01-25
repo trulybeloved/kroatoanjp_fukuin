@@ -91,6 +91,21 @@ You can also run the API using Docker.
    ```
 The API will be available at `http://localhost:8000`.
 
+#### Frontend Usage
+
+The project includes a polished Vue.js frontend for easy interaction.
+
+1. **Start via Docker**:
+   The `docker-compose up` command starts both the API and the Frontend.
+   
+2. **Access the UI**:
+   Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+   Features:
+   - **Processor Tab**: Interactive text replacement with real-time configuration.
+   - **Dictionary Tab**: visual editor for your replacement tables, saved to the backend database.
+   - **Dark Mode**: Enabled by default for a premium experience.
+
 ### Custom Dictionary Usage
 Although their default tokenization is mostly accurate, Fugashi, Sudachi, etc. struggle with separating unknown katakana sequences. Since these most frequently occur in katakana character names, the accuracy of tokenization can be improved by adding these names to a user dictionary.
 
