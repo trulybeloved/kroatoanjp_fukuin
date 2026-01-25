@@ -2,9 +2,9 @@
 import { onMounted, ref } from 'vue';
 import { useAppStore } from './stores/app';
 import { Book, FileText, Github, Moon, Sun, Languages } from 'lucide-vue-next';
-import Button from './components/ui/button/Button.vue';
-import Processor from './components/Processor.vue';
-import DictionaryEditor from './components/DictionaryEditor.vue';
+import Button from '@/components/ui/button/Button.vue';
+import Processor from '@/components/Processor.vue';
+import DictionaryEditor from '@/components/DictionaryEditor.vue';
 
 const store = useAppStore();
 const isDark = ref(true);

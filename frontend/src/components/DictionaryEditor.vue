@@ -2,9 +2,9 @@
 import { computed, ref } from 'vue';
 import { useAppStore } from '@/stores/app';
 import { Save, Copy, Trash2 } from 'lucide-vue-next';
-import Button from './ui/button/Button.vue';
-import Input from './ui/input/Input.vue';
-import JsonTable from './DictionaryEditor/JsonTable.vue';
+import Button from '@/components/ui/button/Button.vue';
+import Input from '@/components/ui/input/Input.vue';
+import JsonTable from '@/components/DictionaryEditor/JsonTable.vue';
 
 const store = useAppStore();
 const activeCategory = ref("names");

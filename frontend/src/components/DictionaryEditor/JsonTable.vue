@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { Trash2, Plus, Edit2, Check, X } from 'lucide-vue-next';
-import Button from '../ui/button/Button.vue';
-import Input from '../ui/input/Input.vue';
+import Button from '@/components/ui/button/Button.vue';
+import Input from '@/components/ui/input/Input.vue';
 
 interface Props {
   data: Record<string, string | string[]>;
