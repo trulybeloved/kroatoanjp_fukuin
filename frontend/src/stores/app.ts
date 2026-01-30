@@ -40,6 +40,7 @@ export const useAppStore = defineStore('app', {
 
         async selectDictionary(id: number) {
             try {
+                console.log("Selected dictionary id: ", id);
                 const response = await api.getDictionary(id);
                 this.currentDictionary = response.data;
                 this.replacementTable = JSON.parse(this.currentDictionary.content);
