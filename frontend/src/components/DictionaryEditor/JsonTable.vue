@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { Trash2, Plus, Edit2, Check, X } from 'lucide-vue-next';
+import { ref, watch, computed } from 'vue';
+import { Trash2, Plus, Edit2, Check, X, Search } from 'lucide-vue-next';
 import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
 
@@ -23,10 +23,40 @@ const editValueInput = ref<string>("");
 const editValueIsArray = ref(false);
 
 const localData = ref({ ...props.data });
+const filterText = ref<string>("");
 
 watch(() => props.data, (newVal) => {
     localData.value = { ...newVal };
 }, { deep: true });
+
+// Computed filtered data based on search text
+const filteredData = computed(() => {
+    if (!filterText.value.trim()) {
+        return localData.value;
+    }
+    
+    const searchTerm = filterText.value.toLowerCase();
+    const filtered: Record<string, string | string[]> = {};
+    
+    for (const [key, value] of Object.entries(localData.value)) {
+        // Check if key matches
+        const keyMatches = key.toLowerCase().includes(searchTerm);
+        
+        // Check if value matches
+        let valueMatches = false;
+        if (Array.isArray(value)) {
+            valueMatches = value.some(v => v.toLowerCase().includes(searchTerm));
+        } else {
+            valueMatches = value.toLowerCase().includes(searchTerm);
+        }
+        
+        if (keyMatches || valueMatches) {
+            filtered[key] = value;
+        }
+    }
+    
+    return filtered;
+});
 
 const deleteItem = (key: string) => {
     delete localData.value[key];
@@ -87,14 +117,24 @@ const saveEdit = () => {
 
 <template>
   <div class="flex flex-col h-full bg-card rounded-xl border shadow-sm overflow-hidden">
-    <div class="p-4 border-b bg-muted/20 flex justify-between items-center">
-        <div>
-            <h3 class="font-semibold text-lg">{{ title }}</h3>
-            <p v-if="description" class="text-xs text-muted-foreground">{{ description }}</p>
+    <div class="p-4 border-b bg-muted/20">
+        <div class="flex justify-between items-center mb-3">
+            <div>
+                <h3 class="font-semibold text-lg">{{ title }}</h3>
+                <p v-if="description" class="text-xs text-muted-foreground">{{ description }}</p>
+            </div>
+            <Button size="sm" @click="startAdd" class="gap-1">
+                <Plus class="h-4 w-4" /> Add Entry
+            </Button>
         </div>
-        <Button size="sm" @click="startAdd" class="gap-1">
-            <Plus class="h-4 w-4" /> Add Entry
-        </Button>
+        <div class="relative">
+            <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input 
+                v-model="filterText" 
+                placeholder="Filter entries by key or value..." 
+                class="pl-9"
+            />
+        </div>
     </div>
 
     <!-- Edit Form Overlay or Inline -->
@@ -131,7 +171,7 @@ const saveEdit = () => {
                 </tr>
             </thead>
             <tbody class="divide-y">
-               <tr v-for="(val, key) in localData" :key="key" class="hover:bg-muted/30 group transition-colors">
+               <tr v-for="(val, key) in filteredData" :key="key" class="hover:bg-muted/30 group transition-colors">
                    <td class="px-4 py-3 font-medium">{{ key }}</td>
                    <td class="px-4 py-3 font-mono text-muted-foreground">
                         <span v-if="Array.isArray(val)" class="flex gap-1 flex-wrap">
@@ -152,9 +192,10 @@ const saveEdit = () => {
                        </div>
                    </td>
                </tr>
-               <tr v-if="Object.keys(localData).length === 0">
+               <tr v-if="Object.keys(filteredData).length === 0">
                    <td colspan="3" class="px-4 py-8 text-center text-muted-foreground">
-                       No entries found. Click "Add Entry" to create one.
+                       <span v-if="filterText.trim()">No entries match your filter.</span>
+                       <span v-else>No entries found. Click "Add Entry" to create one.</span>
                    </td>
                </tr>
             </tbody>

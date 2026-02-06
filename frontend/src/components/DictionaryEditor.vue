@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useAppStore } from '@/stores/app';
-import { Save, Copy, Trash2, Download, Upload } from 'lucide-vue-next';
+import { Save, Copy, Trash2, Download, Upload, Table2, FileJson } from 'lucide-vue-next';
 import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
 import JsonTable from '@/components/DictionaryEditor/JsonTable.vue';
+import JsonEditor from '@/components/DictionaryEditor/JsonEditor.vue';
 import {
     Select,
     SelectContent,
@@ -15,6 +16,7 @@ import {
 
 const store = useAppStore();
 const activeCategory = ref("names");
+const viewMode = ref<'table' | 'json'>('table');
 const newDictName = ref("");
 const showCreateModal = ref(false);
 const fileInputRef = ref<HTMLInputElement | null>(null);
@@ -39,6 +41,15 @@ const categoryData = computed({
     set: (val) => {
         if (!store.replacementTable) store.replacementTable = {};
         store.replacementTable[activeCategory.value] = val;
+        store.dirty = true;
+    }
+});
+
+// Full replacement table for JSON editor
+const fullReplacementTable = computed({
+    get: () => store.replacementTable || {},
+    set: (val) => {
+        store.replacementTable = val;
         store.dirty = true;
     }
 });
@@ -105,10 +116,12 @@ const handleFileChange = (event: Event) => {
     target.value = '';
 };
 
-// const handleSelectChange = (event: Event) => {
-//     console.log("Selected dictionary id: ", event.target);
-//     store.selectDictionary((event.target as any).value.id);
-// }
+const handleDictionaryChange = async (dict: any) => {
+    // Ensure we have a valid dictionary object with an id
+    if (dict && typeof dict === 'object' && 'id' in dict && typeof dict.id === 'number') {
+        await store.selectDictionary(dict.id);
+    }
+};
 
 </script>
 
@@ -124,7 +137,7 @@ const handleFileChange = (event: Event) => {
                 <div class="flex flex-col">
                     <label class="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-1">Active
                         Dictionary</label>
-                    <Select v-model="store.currentDictionary">
+                    <Select :model-value="store.currentDictionary" @update:model-value="handleDictionaryChange">
                         <SelectTrigger>
                             <SelectValue placeholder="Select a dictionary" />
                         </SelectTrigger>
@@ -177,23 +190,69 @@ const handleFileChange = (event: Event) => {
             <!-- Sidebar Navigation -->
             <div class="flex flex-col col-span-3 overflow-hidden border shadow-sm bg-card rounded-xl">
                 <div class="p-4 border-b bg-muted/20">
-                    <h3 class="text-sm font-semibold">Categories</h3>
+                    <h3 class="text-sm font-semibold mb-3">View Mode</h3>
+                    <div class="flex gap-2">
+                        <Button 
+                            size="sm" 
+                            :variant="viewMode === 'table' ? 'default' : 'outline'"
+                            @click="viewMode = 'table'"
+                            class="flex-1 gap-2"
+                        >
+                            <Table2 class="h-4 w-4" />
+                            Table
+                        </Button>
+                        <Button 
+                            size="sm" 
+                            :variant="viewMode === 'json' ? 'default' : 'outline'"
+                            @click="viewMode = 'json'"
+                            class="flex-1 gap-2"
+                        >
+                            <FileJson class="h-4 w-4" />
+                            JSON
+                        </Button>
+                    </div>
                 </div>
-                <div class="flex-1 p-2 space-y-1 overflow-y-auto">
-                    <button v-for="cat in categories" :key="cat.id" @click="activeCategory = cat.id" :class="[
-                        'w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex flex-col gap-0.5',
-                        activeCategory === cat.id ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'
-                    ]">
-                        <span>{{ cat.label }}</span>
-                        <span class="text-[10px] opacity-70 truncate">{{ cat.desc }}</span>
-                    </button>
-                </div>
+                
+                <!-- Categories (only show in table mode) -->
+                <template v-if="viewMode === 'table'">
+                    <div class="p-4 border-b bg-muted/20">
+                        <h3 class="text-sm font-semibold">Categories</h3>
+                    </div>
+                    <div class="flex-1 p-2 space-y-1 overflow-y-auto">
+                        <button v-for="cat in categories" :key="cat.id" @click="activeCategory = cat.id" :class="[
+                            'w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex flex-col gap-0.5',
+                            activeCategory === cat.id ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted text-muted-foreground'
+                        ]">
+                            <span>{{ cat.label }}</span>
+                            <span class="text-[10px] opacity-70 truncate">{{ cat.desc }}</span>
+                        </button>
+                    </div>
+                </template>
+                
+                <!-- JSON mode info -->
+                <template v-else>
+                    <div class="flex-1 p-4 text-sm text-muted-foreground">
+                        <p class="mb-2">Viewing entire dictionary as JSON.</p>
+                        <p class="text-xs">You can search and edit the JSON directly. Changes will be validated in real-time.</p>
+                    </div>
+                </template>
             </div>
 
-            <!-- Main Table -->
+            <!-- Main Content Area -->
             <div class="h-full min-h-0 col-span-9">
-                <JsonTable :title="categories.find(c => c.id === activeCategory)?.label || ''"
-                    :description="categories.find(c => c.id === activeCategory)?.desc" v-model:data="categoryData" />
+                <!-- Table View -->
+                <JsonTable 
+                    v-if="viewMode === 'table'"
+                    :title="categories.find(c => c.id === activeCategory)?.label || ''"
+                    :description="categories.find(c => c.id === activeCategory)?.desc" 
+                    v-model:data="categoryData" 
+                />
+                
+                <!-- JSON Editor View -->
+                <JsonEditor 
+                    v-else
+                    v-model:data="fullReplacementTable"
+                />
             </div>
         </div>
 

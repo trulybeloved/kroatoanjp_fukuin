@@ -42,7 +42,15 @@ export const useAppStore = defineStore('app', {
             try {
                 console.log("Selected dictionary id: ", id);
                 const response = await api.getDictionary(id);
-                this.currentDictionary = response.data;
+
+                // If we're refreshing the currently selected dictionary, update it in-place
+                // to preserve the object reference and prevent Select dropdown from resetting
+                if (this.currentDictionary && this.currentDictionary.id === id) {
+                    Object.assign(this.currentDictionary, response.data);
+                } else {
+                    this.currentDictionary = response.data;
+                }
+
                 this.replacementTable = JSON.parse(this.currentDictionary.content);
                 this.dirty = false;
             } catch (e) {
