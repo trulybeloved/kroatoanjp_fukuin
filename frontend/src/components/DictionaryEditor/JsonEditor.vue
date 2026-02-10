@@ -72,7 +72,7 @@ watch(jsonText, () => {
 </script>
 
 <template>
-  <div class="flex flex-col h-full bg-card rounded-xl border shadow-sm overflow-hidden">
+  <div class="flex flex-col h-full bg-card rounded-xl border shadow-xs overflow-hidden">
     <!-- Header with search -->
     <div class="p-4 border-b bg-muted/20">
       <div class="flex items-center gap-3">
@@ -91,7 +91,7 @@ watch(jsonText, () => {
       
       <!-- Error message -->
       <div v-if="parseError" class="mt-3 flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-        <AlertCircle class="h-4 w-4 text-destructive mt-0.5 flex-shrink-0" />
+        <AlertCircle class="h-4 w-4 text-destructive mt-0.5 shrink-0" />
         <div class="flex-1">
           <p class="text-sm font-medium text-destructive">Invalid JSON</p>
           <p class="text-xs text-destructive/80 mt-1">{{ parseError }}</p>
@@ -103,7 +103,7 @@ watch(jsonText, () => {
     <div class="flex-1 overflow-auto p-0 relative">
       <textarea
         v-model="jsonText"
-        class="w-full h-full p-4 font-mono text-sm bg-transparent border-0 outline-none resize-none"
+        class="w-full h-full p-4 font-mono text-sm bg-transparent border-0 outline-hidden resize-none"
         :class="{ 'text-destructive': parseError }"
         spellcheck="false"
       />
@@ -111,7 +111,7 @@ watch(jsonText, () => {
       <!-- Highlighted overlay (for search highlighting) -->
       <div 
         v-if="searchText.trim() && !parseError"
-        class="absolute inset-0 p-4 font-mono text-sm pointer-events-none whitespace-pre-wrap break-words overflow-auto"
+        class="absolute inset-0 p-4 font-mono text-sm pointer-events-none whitespace-pre-wrap wrap-break-word overflow-auto"
         style="color: transparent;"
         v-html="highlightedJson"
       />

@@ -20,7 +20,7 @@ const handleCopy = () => {
   <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-8rem)]">
     
     <!-- Sidebar / Configuration -->
-    <div class="lg:col-span-1 space-y-6 flex flex-col h-full bg-card rounded-xl border p-5 shadow-sm overflow-y-auto custom-scrollbar">
+    <div class="lg:col-span-1 space-y-6 flex flex-col h-full bg-card rounded-xl border p-5 shadow-xs overflow-y-auto custom-scrollbar">
         <div>
             <h2 class="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Configuration</h2>
             
@@ -29,7 +29,7 @@ const handleCopy = () => {
                     <label class="text-sm font-medium">Dictionary</label>
                     <select 
                         v-model="store.currentDictionary" 
-                        class="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        class="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
                         @change="store.selectDictionary(($event.target as any).value.id)"
                     >
                         <option 
@@ -49,7 +49,7 @@ const handleCopy = () => {
                     <label class="text-sm font-medium">Tokenizer</label>
                     <select 
                         v-model="store.tokenizer" 
-                        class="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        class="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
                     >
                         <option value="spacy">spaCy (Recommended)</option>
                         <option value="sudachi">Sudachi</option>
@@ -85,20 +85,20 @@ const handleCopy = () => {
     <!-- Main IO Area -->
     <div class="lg:col-span-3 grid grid-rows-2 gap-4 h-full">
         <!-- Input -->
-        <div class="bg-card rounded-xl border shadow-sm flex flex-col overflow-hidden group focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+        <div class="bg-card rounded-xl border shadow-xs flex flex-col overflow-hidden group focus-within:ring-2 focus-within:ring-primary/20 transition-all">
             <div class="p-3 border-b bg-muted/40 flex justify-between items-center">
                  <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Input Text</span>
                  <span class="text-xs text-muted-foreground" v-if="store.inputText.length > 0">{{ store.inputText.length }} chars</span>
             </div>
             <textarea 
                 v-model="store.inputText"
-                class="flex-1 w-full bg-transparent p-4 resize-none focus:outline-none font-mono text-sm leading-relaxed scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-secondary hover:scrollbar-thumb-primary"
+                class="flex-1 w-full bg-transparent p-4 resize-none focus:outline-hidden font-mono text-sm leading-relaxed scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-secondary hover:scrollbar-thumb-primary"
                 placeholder="Paste Japanese text here..."
             ></textarea>
         </div>
 
         <!-- Output -->
-        <div class="bg-card rounded-xl border shadow-sm flex flex-col overflow-hidden group relative">
+        <div class="bg-card rounded-xl border shadow-xs flex flex-col overflow-hidden group relative">
              <div class="p-3 border-b bg-muted/40 flex justify-between items-center bg-primary/5">
                  <span class="text-xs font-semibold uppercase tracking-wider text-primary">Output Result</span>
                  <Button variant="ghost" size="sm" class="h-6 w-6 p-0 hover:bg-primary/10 hover:text-primary" @click="handleCopy" :title="copied ? 'Copied' : 'Copy'">
@@ -109,11 +109,11 @@ const handleCopy = () => {
             <textarea 
                 v-model="store.outputText"
                 readonly
-                class="flex-1 w-full bg-transparent p-4 resize-none focus:outline-none font-mono text-sm leading-relaxed text-muted-foreground scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-secondary hover:scrollbar-thumb-primary"
+                class="flex-1 w-full bg-transparent p-4 resize-none focus:outline-hidden font-mono text-sm leading-relaxed text-muted-foreground scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-secondary hover:scrollbar-thumb-primary"
                 placeholder="Result will appear here..."
             ></textarea>
             
-            <div v-if="store.outputText && !store.isProcessing" class="absolute bottom-4 right-4 text-xs bg-background/80 backdrop-blur px-2 py-1 rounded border shadow-sm text-green-600 font-medium animate-accordion-down">
+            <div v-if="store.outputText && !store.isProcessing" class="absolute bottom-4 right-4 text-xs bg-background/80 backdrop-blur-sm px-2 py-1 rounded border shadow-xs text-green-600 font-medium animate-accordion-down">
                 Processing Complete
             </div>
         </div>

@@ -28,8 +28,8 @@ const toggleDark = () => {
 <template>
   <div class="min-h-screen bg-background text-foreground flex flex-col font-sans transition-colors duration-300">
     <!-- Header with Glassmorphism -->
-    <header class="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
-      <div class="container flex h-14 max-w-screen-2xl items-center justify-between px-4 sm:px-8">
+    <header class="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl supports-backdrop-filter:bg-background/60">
+      <div class="container flex h-14 max-w-(--breakpoint-2xl) items-center justify-between px-4 sm:px-8">
         <div class="flex items-center gap-2">
           <Languages class="h-6 w-6 text-primary animate-pulse" />
           <span class="font-bold text-lg tracking-tight">Fukuin Preprocessor</span>
@@ -76,7 +76,7 @@ const toggleDark = () => {
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1 container max-w-screen-2xl py-6 px-4 sm:px-8">
+    <main class="flex-1 container max-w-(--breakpoint-2xl) py-6 px-4 sm:px-8">
       <transition 
          enter-active-class="transition duration-200 ease-out"
          enter-from-class="opacity-0 translate-y-1"

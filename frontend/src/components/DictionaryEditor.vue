@@ -132,7 +132,7 @@ const handleDictionaryChange = async (dict: any) => {
         <input ref="fileInputRef" type="file" accept=".json" class="hidden" @change="handleFileChange" />
 
         <!-- Toolbar -->
-        <div class="flex items-center justify-between p-4 border shadow-sm bg-card rounded-xl">
+        <div class="flex items-center justify-between p-4 border shadow-xs bg-card rounded-xl">
             <div class="flex items-center gap-4">
                 <div class="flex flex-col">
                     <label class="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-1">Active
@@ -188,13 +188,13 @@ const handleDictionaryChange = async (dict: any) => {
         <div class="grid flex-1 min-h-0 grid-cols-12 gap-6">
 
             <!-- Sidebar Navigation -->
-            <div class="flex flex-col col-span-3 overflow-hidden border shadow-sm bg-card rounded-xl">
+            <div class="flex flex-col col-span-3 overflow-hidden border shadow-xs bg-card rounded-xl">
                 <div class="p-4 border-b bg-muted/20">
                     <h3 class="text-sm font-semibold mb-3">View Mode</h3>
                     <div class="flex gap-2">
                         <Button 
                             size="sm" 
-                            :variant="viewMode === 'table' ? 'default' : 'outline'"
+                            :variant="viewMode === 'table' ? 'default' : 'outline-solid'"
                             @click="viewMode = 'table'"
                             class="flex-1 gap-2"
                         >
@@ -203,7 +203,7 @@ const handleDictionaryChange = async (dict: any) => {
                         </Button>
                         <Button 
                             size="sm" 
-                            :variant="viewMode === 'json' ? 'default' : 'outline'"
+                            :variant="viewMode === 'json' ? 'default' : 'outline-solid'"
                             @click="viewMode = 'json'"
                             class="flex-1 gap-2"
                         >
@@ -258,7 +258,7 @@ const handleDictionaryChange = async (dict: any) => {
 
         <!-- Simple Create Modal -->
         <div v-if="showCreateModal"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+            class="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-xs">
             <div
                 class="w-full max-w-md p-6 space-y-4 duration-200 border shadow-lg bg-card rounded-xl animate-in fade-in zoom-in-95">
                 <div>

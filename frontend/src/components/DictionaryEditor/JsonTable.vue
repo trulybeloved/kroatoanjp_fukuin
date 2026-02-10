@@ -116,7 +116,7 @@ const saveEdit = () => {
 </script>
 
 <template>
-  <div class="flex flex-col h-full bg-card rounded-xl border shadow-sm overflow-hidden">
+  <div class="flex flex-col h-full bg-card rounded-xl border shadow-xs overflow-hidden">
     <div class="p-4 border-b bg-muted/20">
         <div class="flex justify-between items-center mb-3">
             <div>
@@ -163,7 +163,7 @@ const saveEdit = () => {
 
     <div class="flex-1 overflow-auto p-0">
         <table class="w-full text-sm text-left">
-            <thead class="text-xs text-muted-foreground uppercase bg-muted/40 sticky top-0 backdrop-blur-sm">
+            <thead class="text-xs text-muted-foreground uppercase bg-muted/40 sticky top-0 backdrop-blur-xs">
                 <tr>
                     <th class="px-4 py-3 font-medium w-[40%]">English Name / Key</th>
                     <th class="px-4 py-3 font-medium">Japanese Value</th>
