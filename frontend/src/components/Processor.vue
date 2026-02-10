@@ -92,7 +92,7 @@ const handleCopy = () => {
             </div>
             <textarea 
                 v-model="store.inputText"
-                class="flex-1 w-full bg-transparent p-4 resize-none focus:outline-none font-mono text-sm leading-relaxed"
+                class="flex-1 w-full bg-transparent p-4 resize-none focus:outline-none font-mono text-sm leading-relaxed scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-secondary hover:scrollbar-thumb-primary"
                 placeholder="Paste Japanese text here..."
             ></textarea>
         </div>
@@ -109,7 +109,7 @@ const handleCopy = () => {
             <textarea 
                 v-model="store.outputText"
                 readonly
-                class="flex-1 w-full bg-transparent p-4 resize-none focus:outline-none font-mono text-sm leading-relaxed text-muted-foreground"
+                class="flex-1 w-full bg-transparent p-4 resize-none focus:outline-none font-mono text-sm leading-relaxed text-muted-foreground scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-secondary hover:scrollbar-thumb-primary"
                 placeholder="Result will appear here..."
             ></textarea>
             
