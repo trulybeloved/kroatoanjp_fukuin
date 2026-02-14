@@ -194,7 +194,7 @@ const handleDictionaryChange = async (dict: any) => {
                     <div class="flex gap-2">
                         <Button 
                             size="sm" 
-                            :variant="viewMode === 'table' ? 'default' : 'outline-solid'"
+                            :variant="viewMode === 'table' ? 'default' : 'outline'"
                             @click="viewMode = 'table'"
                             class="flex-1 gap-2"
                         >
@@ -203,7 +203,7 @@ const handleDictionaryChange = async (dict: any) => {
                         </Button>
                         <Button 
                             size="sm" 
-                            :variant="viewMode === 'json' ? 'default' : 'outline-solid'"
+                            :variant="viewMode === 'json' ? 'default' : 'outline'"
                             @click="viewMode = 'json'"
                             class="flex-1 gap-2"
                         >
