@@ -18,15 +18,18 @@ const emit = defineEmits<{
     (e: 'update:data', payload: TableData): void;
 }>();
 
-// Deep-clone on init so array values aren't shared references with the parent
-const localData = ref<TableData>(structuredClone(props.data));
+// Deep-clone on init so array values aren't shared references with the parent.
+// JSON round-trip is used because structuredClone can't clone Vue reactive proxies.
+const deepClone = <T>(val: T): T => JSON.parse(JSON.stringify(val));
+
+const localData = ref<TableData>(deepClone(props.data));
 
 // Sync when the parent swaps in entirely new data (e.g. dictionary switch).
 // Category switches are handled by the parent via :key, which remounts this
 // component, so we only need to handle genuine prop updates here.
 watch(
     () => props.data,
-    (newVal) => { localData.value = structuredClone(newVal); },
+    (newVal) => { localData.value = deepClone(newVal); },
     { deep: true },
 );
 

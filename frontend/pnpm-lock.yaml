@@ -23,6 +23,9 @@ importers:
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
+      json-editor-vue:
+        specifier: 0.18.1
+        version: 0.18.1(vue@3.5.27(typescript@5.9.3))
       lucide-vue-next:
         specifier: ^0.300.0
         version: 0.300.0(vue@3.5.27(typescript@5.9.3))
@@ -877,6 +880,15 @@ packages:
   jsep@1.4.0:
     resolution: {integrity: sha512-B7qPcEVE3NVkmSJbaYxvv4cHkVW7DQsZz13pUMrfS8z8Q/BuShN+gcTXrUlPiGqM2/t/EEaI030bpxMqY8gMlw==}
     engines: {node: '>= 10.16.0'}
+
+  json-editor-vue@0.18.1:
+    resolution: {integrity: sha512-SQCtNngo/ScFjXC7KUOqLOeeLgvl+xwWbxfNelqIOHC6uLilQl7AlWzNJyrDqo+RWnc53nT0OngXki5uTx9SJg==}
+    peerDependencies:
+      '@vue/composition-api': '>=1'
+      vue: 2||3
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
 
   json-schema-traverse@1.0.0:
     resolution: {integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==}
@@ -1902,6 +1914,12 @@ snapshots:
   jmespath@0.16.0: {}
 
   jsep@1.4.0: {}
+
+  json-editor-vue@0.18.1(vue@3.5.27(typescript@5.9.3)):
+    dependencies:
+      vanilla-jsoneditor: 3.11.0
+      vue: 3.5.27(typescript@5.9.3)
+      vue-demi: 0.14.10(vue@3.5.27(typescript@5.9.3))
 
   json-schema-traverse@1.0.0: {}
 

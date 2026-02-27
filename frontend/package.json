@@ -14,6 +14,7 @@
         "axios": "^1.6.0",
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.0.0",
+        "json-editor-vue": "0.18.1",
         "lucide-vue-next": "^0.300.0",
         "pinia": "^2.1.7",
         "reka-ui": "2.7.0",
