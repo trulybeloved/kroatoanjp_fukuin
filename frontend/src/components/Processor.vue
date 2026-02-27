@@ -2,6 +2,8 @@
 import { useAppStore } from '@/stores/app';
 import { Play, Copy, Check, RotateCw } from 'lucide-vue-next';
 import Button from '@/components/ui/button/Button.vue';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { useClipboard } from '@vueuse/core';
 
 const store = useAppStore();
@@ -27,19 +29,23 @@ const handleCopy = () => {
             <div class="space-y-4">
                 <div class="space-y-2">
                     <label class="text-sm font-medium">Dictionary</label>
-                    <select 
-                        v-model="store.currentDictionary" 
-                        class="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
-                        @change="store.selectDictionary(($event.target as any).value.id)"
+                    <Select
+                        :model-value="store.currentDictionary?.id?.toString()"
+                        @update:model-value="(val) => store.selectDictionary(Number(val))"
                     >
-                        <option 
-                            v-for="dict in store.dictionaries" 
-                            :key="dict.id" 
-                            :value="dict"
-                        >
-                            {{ dict.name }} {{ dict.is_default ? '(Default)' : ''}}
-                        </option>
-                    </select>
+                        <SelectTrigger class="w-full">
+                            <SelectValue placeholder="Select a dictionary" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem
+                                v-for="dict in store.dictionaries"
+                                :key="dict.id"
+                                :value="dict.id.toString()"
+                            >
+                                {{ dict.name }} {{ dict.is_default ? '(Default)' : '' }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
                     <p class="text-xs text-muted-foreground" v-if="store.currentDictionary">
                         Loaded: {{ store.currentDictionary.name }}
                     </p>
@@ -47,14 +53,16 @@ const handleCopy = () => {
 
                 <div class="space-y-2">
                     <label class="text-sm font-medium">Tokenizer</label>
-                    <select 
-                        v-model="store.tokenizer" 
-                        class="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
-                    >
-                        <option value="spacy">spaCy (Recommended)</option>
-                        <option value="sudachi">Sudachi</option>
-                        <option value="fugashi">Fugashi</option>
-                    </select>
+                    <Select v-model="store.tokenizer">
+                        <SelectTrigger class="w-full">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="spacy">spaCy (Recommended)</SelectItem>
+                            <SelectItem value="sudachi">Sudachi</SelectItem>
+                            <SelectItem value="fugashi">Fugashi</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
             </div>
         </div>
@@ -90,11 +98,11 @@ const handleCopy = () => {
                  <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Input Text</span>
                  <span class="text-xs text-muted-foreground" v-if="store.inputText.length > 0">{{ store.inputText.length }} chars</span>
             </div>
-            <textarea 
+            <Textarea
                 v-model="store.inputText"
-                class="flex-1 w-full bg-transparent p-4 resize-none focus:outline-hidden font-mono text-sm leading-relaxed scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-secondary hover:scrollbar-thumb-primary"
+                class="flex-1 w-full rounded-none border-0 shadow-none bg-transparent p-4 resize-none focus-visible:ring-0 font-mono text-sm leading-relaxed scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-secondary hover:scrollbar-thumb-primary"
                 placeholder="Paste Japanese text here..."
-            ></textarea>
+            />
         </div>
 
         <!-- Output -->
@@ -106,12 +114,12 @@ const handleCopy = () => {
                      <Copy v-else class="h-3.5 w-3.5" />
                  </Button>
             </div>
-            <textarea 
+            <Textarea
                 v-model="store.outputText"
                 readonly
-                class="flex-1 w-full bg-transparent p-4 resize-none focus:outline-hidden font-mono text-sm leading-relaxed text-muted-foreground scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-secondary hover:scrollbar-thumb-primary"
+                class="flex-1 w-full rounded-none border-0 shadow-none bg-transparent p-4 resize-none focus-visible:ring-0 font-mono text-sm leading-relaxed text-muted-foreground scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-secondary hover:scrollbar-thumb-primary"
                 placeholder="Result will appear here..."
-            ></textarea>
+            />
             
             <div v-if="store.outputText && !store.isProcessing" class="absolute bottom-4 right-4 text-xs bg-background/80 backdrop-blur-sm px-2 py-1 rounded border shadow-xs text-green-600 font-medium animate-accordion-down">
                 Processing Complete
