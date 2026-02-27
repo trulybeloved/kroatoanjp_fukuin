@@ -13,11 +13,11 @@ services:
     # Override CMD to allow for better development experience with reload if needed
     # command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
 
-  frontend:
-    image: node:20-slim
-    working_dir: /app
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
-    command: npm run dev -- --host
+  # frontend:
+  #   image: node:20-slim
+  #   working_dir: /app
+  #   ports:
+  #     - "5173:5173"
+  #   volumes:
+  #     - ./frontend:/app
+  #   command: npm run dev -- --host
