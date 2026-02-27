@@ -21,7 +21,8 @@
         "tailwind-merge": "^2.0.0",
         "tailwindcss-animate": "^1.0.7",
         "vanilla-jsoneditor": "3.11.0",
-        "vue": "^3.4.0"
+        "vue": "^3.4.0",
+        "vue-sonner": "^2.0.9"
     },
     "devDependencies": {
         "@tailwindcss/postcss": "4.1.18",

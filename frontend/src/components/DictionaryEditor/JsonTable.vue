@@ -157,12 +157,12 @@ const deleteItem = (key: string) => {
         </div>
 
         <!-- Table -->
-        <div class="flex-1 overflow-auto">
+        <div class="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-muted-foreground/40 scrollbar-track-transparent hover:scrollbar-thumb-muted-foreground/60">
             <table class="w-full text-sm text-left">
                 <thead class="text-xs text-muted-foreground uppercase bg-muted/40 sticky top-0 backdrop-blur-xs">
                     <tr>
-                        <th class="px-4 py-3 font-medium w-[40%]">English Name / Key</th>
-                        <th class="px-4 py-3 font-medium">Japanese Value</th>
+                        <th class="px-4 py-3 font-medium w-[40%]">Key</th>
+                        <th class="px-4 py-3 font-medium">Value</th>
                         <th class="px-4 py-3 font-medium w-20 text-right">Actions</th>
                     </tr>
                 </thead>
