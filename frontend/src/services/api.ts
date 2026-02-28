@@ -11,6 +11,17 @@ export interface Dictionary {
     updated_at: string;
 }
 
+export interface DictionaryHistoryEntry {
+    id: number;
+    dictionary_id: number;
+    version_number: number;
+    created_at: string;
+}
+
+export interface DictionaryHistoryDetail extends DictionaryHistoryEntry {
+    content: string;
+}
+
 export interface PreprocessResponse {
     text: string;
     total_replacements: number;
@@ -63,5 +74,13 @@ export const api = {
 
     async setDefaultDictionary(id: number) {
         return axios.put<Dictionary>(`${API_URL}/dictionaries/${id}/set-default`);
+    },
+
+    async getDictionaryHistory(id: number) {
+        return axios.get<DictionaryHistoryEntry[]>(`${API_URL}/dictionaries/${id}/history`);
+    },
+
+    async getDictionaryHistoryVersion(dictId: number, versionId: number) {
+        return axios.get<DictionaryHistoryDetail>(`${API_URL}/dictionaries/${dictId}/history/${versionId}`);
     }
 };
