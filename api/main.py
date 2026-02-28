@@ -13,7 +13,7 @@ from preprocess.tokenizer.fugashi_tokenizer import FugashiTokenizer
 from preprocess.tokenizer.sudachi_tokenizer import SudachiTokenizer
 from preprocess.tokenizer.spacy_tokenizer import SpacyTokenizer
 from preprocess.tagger import Tagger
-from api.db import init_db, get_db_connection
+from api.db import init_db, get_db_connection, save_history_entry
 
 app = FastAPI(title="Fukuin Preprocessor API")
 
@@ -69,6 +69,19 @@ class CreateDictionaryRequest(BaseModel):
 class UpdateDictionaryRequest(BaseModel):
     name: Optional[str] = None
     content: Optional[str] = None
+
+class DictionaryHistoryEntry(BaseModel):
+    id: int
+    dictionary_id: int
+    version_number: int
+    created_at: str
+
+class DictionaryHistoryDetail(BaseModel):
+    id: int
+    dictionary_id: int
+    version_number: int
+    content: str
+    created_at: str
 
 def get_tokenizer(tokenizer_name: str, use_user_dict: bool, user_dic_path: Optional[str]):
     cache_key = (tokenizer_name, use_user_dict, user_dic_path)
@@ -177,6 +190,7 @@ async def create_dictionary(request: CreateDictionaryRequest):
             (request.name, request.content)
         )
         dict_id = cursor.lastrowid
+        save_history_entry(cursor, dict_id, request.content)
         conn.commit()
         dictionary = conn.execute('SELECT * FROM dictionaries WHERE id = ?', (dict_id,)).fetchone()
         return dict(dictionary)
@@ -192,38 +206,88 @@ async def update_dictionary(id: int, request: UpdateDictionaryRequest):
     if dictionary is None:
         conn.close()
         raise HTTPException(status_code=404, detail="Dictionary not found")
-    
-    # Optional: Prevent editing default dictionary content directly, but user asked to be able to make changes.
-    # The user said: "Yes, bundle the default file, I should be able to make changes to it"
-    
+
     update_fields = []
     params = []
+    content_changed = False
+
     if request.name:
         update_fields.append("name = ?")
         params.append(request.name)
-    if request.content:
+    if request.content is not None and request.content != dictionary['content']:
+        content_changed = True
         update_fields.append("content = ?")
         params.append(request.content)
-    
+    elif request.content is not None:
+        # Content provided but identical — still include in SET to be explicit
+        update_fields.append("content = ?")
+        params.append(request.content)
+
     if not update_fields:
-         conn.close()
-         return dict(dictionary)
+        conn.close()
+        return dict(dictionary)
 
     update_fields.append("updated_at = ?")
     params.append(datetime.now().isoformat())
     params.append(id)
 
     query = f"UPDATE dictionaries SET {', '.join(update_fields)} WHERE id = ?"
-    
+
     try:
-        conn.execute(query, params)
+        cursor = conn.cursor()
+        cursor.execute(query, params)
+        if content_changed:
+            save_history_entry(cursor, id, request.content)
         conn.commit()
         updated_dict = conn.execute('SELECT * FROM dictionaries WHERE id = ?', (id,)).fetchone()
         return dict(updated_dict)
     except sqlite3.IntegrityError:
-         raise HTTPException(status_code=400, detail="Dictionary name conflict")
+        raise HTTPException(status_code=400, detail="Dictionary name conflict")
     finally:
         conn.close()
+
+@app.put("/dictionaries/{id}/set-default", response_model=DictionaryModel)
+async def set_default_dictionary(id: int):
+    conn = get_db_connection()
+    dictionary = conn.execute('SELECT * FROM dictionaries WHERE id = ?', (id,)).fetchone()
+    if dictionary is None:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Dictionary not found")
+
+    try:
+        conn.execute('UPDATE dictionaries SET is_default = 0')
+        conn.execute('UPDATE dictionaries SET is_default = 1 WHERE id = ?', (id,))
+        conn.commit()
+        updated = conn.execute('SELECT * FROM dictionaries WHERE id = ?', (id,)).fetchone()
+        return dict(updated)
+    finally:
+        conn.close()
+
+@app.get("/dictionaries/{id}/history", response_model=List[DictionaryHistoryEntry])
+async def get_dictionary_history(id: int):
+    conn = get_db_connection()
+    dictionary = conn.execute('SELECT id FROM dictionaries WHERE id = ?', (id,)).fetchone()
+    if dictionary is None:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Dictionary not found")
+    entries = conn.execute(
+        'SELECT id, dictionary_id, version_number, created_at FROM dictionary_history WHERE dictionary_id = ? ORDER BY version_number DESC',
+        (id,)
+    ).fetchall()
+    conn.close()
+    return [dict(e) for e in entries]
+
+@app.get("/dictionaries/{dict_id}/history/{version_id}", response_model=DictionaryHistoryDetail)
+async def get_dictionary_history_version(dict_id: int, version_id: int):
+    conn = get_db_connection()
+    entry = conn.execute(
+        'SELECT * FROM dictionary_history WHERE id = ? AND dictionary_id = ?',
+        (version_id, dict_id)
+    ).fetchone()
+    conn.close()
+    if entry is None:
+        raise HTTPException(status_code=404, detail="History entry not found")
+    return dict(entry)
 
 @app.delete("/dictionaries/{id}")
 async def delete_dictionary(id: int):
