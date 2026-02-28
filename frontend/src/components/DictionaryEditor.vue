@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/dialog';
 
 const store = useAppStore();
-const activeCategory = ref('names');
+const activeCategory = ref('specials');
 const viewMode = ref<'table' | 'json' | 'history'>('json');
 const newDictName = ref('');
 const showCreateModal = ref(false);
@@ -111,13 +111,13 @@ watch(() => store.currentDictionary?.id, () => {
 });
 
 const categories = [
+    { id: 'specials', label: 'Specials', desc: 'Non-name replacements' },
     { id: 'names', label: 'Important Names', desc: 'Main characters and places' },
+    { id: 'single-names', label: 'Single Names', desc: 'First names or single parts' },
     { id: 'honorifics', label: 'Honorifics', desc: 'Japanese honorific mappings' },
     { id: 'full-names', label: 'Remaining Names', desc: 'Full names of other characters' },
     { id: 'last-names', label: 'Last Names', desc: 'Last names only' },
-    { id: 'single-names', label: 'Single Names', desc: 'First names or single parts' },
     { id: 'name-like', label: 'Name-like', desc: 'Terms treated as names' },
-    { id: 'specials', label: 'Specials', desc: 'Non-name replacements' },
     { id: 'basic', label: 'Basic', desc: 'General punctuation/terms' },
 ];
 

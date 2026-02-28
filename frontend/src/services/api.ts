@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000'; // Adjust if needed
+const API_URL = '/api'; // Adjust if needed
 
 export interface Dictionary {
     id: number;

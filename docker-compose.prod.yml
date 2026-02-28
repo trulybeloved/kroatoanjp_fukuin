@@ -1,0 +1,21 @@
+services:
+  fukuin-api:
+    build: .
+    container_name: fukuin-api
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./fukuin.db:/app/fukuin.db
+      - ./data:/app/data
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: fukuin-frontend
+    ports:
+      - "5499:80"
+    depends_on:
+      - fukuin-api
+    restart: unless-stopped
