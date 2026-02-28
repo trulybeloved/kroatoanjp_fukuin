@@ -28,7 +28,8 @@ const toggleDark = () => {
 <template>
   <div class="min-h-screen bg-background text-foreground flex flex-col font-sans transition-colors duration-300">
     <!-- Header with Glassmorphism -->
-    <header class="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl supports-backdrop-filter:bg-background/60">
+    <header
+      class="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl supports-backdrop-filter:bg-background/60">
       <div class="container flex h-14 max-w-(--breakpoint-2xl) items-center justify-between px-4 sm:px-8">
         <div class="flex items-center gap-2">
           <Languages class="h-6 w-6 text-primary animate-pulse" />
@@ -36,21 +37,13 @@ const toggleDark = () => {
         </div>
 
         <nav class="flex items-center gap-1">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            :class="{ 'bg-accent': store.activeTab === 'processor' }"
-            @click="store.activeTab = 'processor'"
-          >
+          <Button variant="ghost" size="sm" :class="{ 'bg-accent': store.activeTab === 'processor' }"
+            @click="store.activeTab = 'processor'">
             <FileText class="mr-2 h-4 w-4" />
             Processor
           </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            :class="{ 'bg-accent': store.activeTab === 'dictionary' }"
-            @click="store.activeTab = 'dictionary'"
-          >
+          <Button variant="ghost" size="sm" :class="{ 'bg-accent': store.activeTab === 'dictionary' }"
+            @click="store.activeTab = 'dictionary'">
             <Book class="mr-2 h-4 w-4" />
             Dictionary
           </Button>
@@ -65,11 +58,11 @@ const toggleDark = () => {
             <Sun v-else class="h-5 w-5 transition-transform hover:rotate-90" />
             <span class="sr-only">Toggle theme</span>
           </Button>
-          <a href="https://github.com/kroatoanjp/fukuin" target="_blank" rel="noreferrer">
-             <Button variant="ghost" size="icon">
-                <Github class="h-5 w-5" />
-                <span class="sr-only">GitHub</span>
-             </Button>
+          <a href="https://github.com/kroatoanjp/nlp-mtl-preprocessing-script" target="_blank" rel="noreferrer">
+            <Button variant="ghost" size="icon">
+              <Github class="h-5 w-5" />
+              <span class="sr-only">GitHub</span>
+            </Button>
           </a>
         </div>
       </div>
@@ -77,15 +70,9 @@ const toggleDark = () => {
 
     <!-- Main Content -->
     <main class="flex-1 container max-w-(--breakpoint-2xl) py-6 px-4 sm:px-8">
-      <transition 
-         enter-active-class="transition duration-200 ease-out"
-         enter-from-class="opacity-0 translate-y-1"
-         enter-to-class="opacity-100 translate-y-0"
-         leave-active-class="transition duration-150 ease-in"
-         leave-from-class="opacity-100 translate-y-0"
-         leave-to-class="opacity-0 translate-y-1"
-         mode="out-in"
-      >
+      <transition enter-active-class="transition duration-200 ease-out" enter-from-class="opacity-0 translate-y-1"
+        enter-to-class="opacity-100 translate-y-0" leave-active-class="transition duration-150 ease-in"
+        leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1" mode="out-in">
         <Processor v-if="store.activeTab === 'processor'" />
         <DictionaryEditor v-else />
       </transition>
@@ -98,13 +85,16 @@ const toggleDark = () => {
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: hsl(var(--muted-foreground) / 0.3);
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--muted-foreground) / 0.5);
 }

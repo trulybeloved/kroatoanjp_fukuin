@@ -225,6 +225,23 @@ async def update_dictionary(id: int, request: UpdateDictionaryRequest):
     finally:
         conn.close()
 
+@app.put("/dictionaries/{id}/set-default", response_model=DictionaryModel)
+async def set_default_dictionary(id: int):
+    conn = get_db_connection()
+    dictionary = conn.execute('SELECT * FROM dictionaries WHERE id = ?', (id,)).fetchone()
+    if dictionary is None:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Dictionary not found")
+
+    try:
+        conn.execute('UPDATE dictionaries SET is_default = 0')
+        conn.execute('UPDATE dictionaries SET is_default = 1 WHERE id = ?', (id,))
+        conn.commit()
+        updated = conn.execute('SELECT * FROM dictionaries WHERE id = ?', (id,)).fetchone()
+        return dict(updated)
+    finally:
+        conn.close()
+
 @app.delete("/dictionaries/{id}")
 async def delete_dictionary(id: int):
     conn = get_db_connection()

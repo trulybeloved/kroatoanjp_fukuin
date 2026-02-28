@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useAppStore } from '@/stores/app';
-import { Save, Copy, Trash2, Download, Upload, Table2, FileJson } from 'lucide-vue-next';
+import { Save, Copy, Trash2, Download, Upload, Table2, FileJson, Star } from 'lucide-vue-next';
 import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
 import JsonTable from '@/components/DictionaryEditor/JsonTable.vue';
@@ -24,20 +24,20 @@ import {
 
 const store = useAppStore();
 const activeCategory = ref('names');
-const viewMode = ref<'table' | 'json'>('table');
+const viewMode = ref<'table' | 'json'>('json');
 const newDictName = ref('');
 const showCreateModal = ref(false);
 const fileInputRef = ref<HTMLInputElement | null>(null);
 
 const categories = [
-    { id: 'names',       label: 'Important Names',  desc: 'Main characters and places' },
-    { id: 'honorifics',  label: 'Honorifics',        desc: 'Japanese honorific mappings' },
-    { id: 'full-names',  label: 'Remaining Names',   desc: 'Full names of other characters' },
-    { id: 'last-names',  label: 'Last Names',        desc: 'Last names only' },
-    { id: 'single-names',label: 'Single Names',      desc: 'First names or single parts' },
-    { id: 'name-like',   label: 'Name-like',         desc: 'Terms treated as names' },
-    { id: 'specials',    label: 'Specials',          desc: 'Non-name replacements' },
-    { id: 'basic',       label: 'Basic',             desc: 'General punctuation/terms' },
+    { id: 'names', label: 'Important Names', desc: 'Main characters and places' },
+    { id: 'honorifics', label: 'Honorifics', desc: 'Japanese honorific mappings' },
+    { id: 'full-names', label: 'Remaining Names', desc: 'Full names of other characters' },
+    { id: 'last-names', label: 'Last Names', desc: 'Last names only' },
+    { id: 'single-names', label: 'Single Names', desc: 'First names or single parts' },
+    { id: 'name-like', label: 'Name-like', desc: 'Terms treated as names' },
+    { id: 'specials', label: 'Specials', desc: 'Non-name replacements' },
+    { id: 'basic', label: 'Basic', desc: 'General punctuation/terms' },
 ];
 
 // Use a string ID so the Select can match values by reference-free equality
@@ -79,6 +79,11 @@ const handleCreate = async () => {
     await store.createWithCurrentContent(name);
     showCreateModal.value = false;
     newDictName.value = '';
+};
+
+const handleSetDefault = async () => {
+    if (!store.currentDictionary || store.currentDictionary.is_default) return;
+    await store.setDefaultDictionary(store.currentDictionary.id);
 };
 
 const handleDelete = async () => {
@@ -137,18 +142,21 @@ const handleFileChange = (event: Event) => {
                             <SelectValue placeholder="Select a dictionary" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem
-                                v-for="dict in store.dictionaries"
-                                :key="dict.id"
-                                :value="String(dict.id)"
-                            >
-                                {{ dict.name }}{{ dict.is_default ? ' (Read-Only)' : '' }}
+                            <SelectItem v-for="dict in store.dictionaries" :key="dict.id" :value="String(dict.id)">
+                                {{ dict.name }}{{ dict.is_default ? ' (Default)' : '' }}
                             </SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
 
                 <div class="w-px h-8 mx-2 bg-border" />
+
+                <Button size="sm" variant="outline"
+                    :disabled="!store.currentDictionary || store.currentDictionary.is_default"
+                    @click="handleSetDefault">
+                    <Star class="w-4 h-4 mr-2" />
+                    Set as Default
+                </Button>
 
                 <Button size="sm" variant="outline" @click="showCreateModal = true">
                     <Copy class="w-4 h-4 mr-2" />
@@ -165,12 +173,8 @@ const handleFileChange = (event: Event) => {
                     Import
                 </Button>
 
-                <Button
-                    size="sm"
-                    variant="destructive"
-                    :disabled="!store.currentDictionary || store.currentDictionary.is_default"
-                    @click="handleDelete"
-                >
+                <Button size="sm" variant="destructive"
+                    :disabled="!store.currentDictionary || store.currentDictionary.is_default" @click="handleDelete">
                     <Trash2 class="w-4 h-4" />
                 </Button>
             </div>
@@ -179,10 +183,7 @@ const handleFileChange = (event: Event) => {
                 <span v-if="store.dirty" class="mr-2 text-xs font-medium text-yellow-500 animate-pulse">
                     Unsaved Changes
                 </span>
-                <Button
-                    @click="handleSave"
-                    :disabled="!store.dirty || (store.currentDictionary?.is_default ?? true)"
-                >
+                <Button @click="handleSave" :disabled="!store.dirty">
                     <Save class="w-4 h-4 mr-2" />
                     Save Changes
                 </Button>
@@ -197,20 +198,12 @@ const handleFileChange = (event: Event) => {
                 <div class="p-4 border-b bg-muted/20">
                     <h3 class="text-sm font-semibold mb-3">View Mode</h3>
                     <div class="flex gap-2">
-                        <Button
-                            size="sm"
-                            :variant="viewMode === 'table' ? 'default' : 'outline'"
-                            class="flex-1 gap-2"
-                            @click="viewMode = 'table'"
-                        >
+                        <Button size="sm" :variant="viewMode === 'table' ? 'default' : 'outline'" class="flex-1 gap-2"
+                            @click="viewMode = 'table'">
                             <Table2 class="h-4 w-4" /> Table
                         </Button>
-                        <Button
-                            size="sm"
-                            :variant="viewMode === 'json' ? 'default' : 'outline'"
-                            class="flex-1 gap-2"
-                            @click="viewMode = 'json'"
-                        >
+                        <Button size="sm" :variant="viewMode === 'json' ? 'default' : 'outline'" class="flex-1 gap-2"
+                            @click="viewMode = 'json'">
                             <FileJson class="h-4 w-4" /> JSON
                         </Button>
                     </div>
@@ -221,17 +214,12 @@ const handleFileChange = (event: Event) => {
                         <h3 class="text-sm font-semibold">Categories</h3>
                     </div>
                     <div class="flex-1 p-2 space-y-1 overflow-y-auto">
-                        <button
-                            v-for="cat in categories"
-                            :key="cat.id"
-                            @click="activeCategory = cat.id"
-                            :class="[
-                                'w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex flex-col gap-0.5',
-                                activeCategory === cat.id
-                                    ? 'bg-primary/10 text-primary font-medium'
-                                    : 'hover:bg-muted text-muted-foreground',
-                            ]"
-                        >
+                        <button v-for="cat in categories" :key="cat.id" @click="activeCategory = cat.id" :class="[
+                            'w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors flex flex-col gap-0.5',
+                            activeCategory === cat.id
+                                ? 'bg-primary/10 text-primary font-medium'
+                                : 'hover:bg-muted text-muted-foreground',
+                        ]">
                             <span>{{ cat.label }}</span>
                             <span class="text-[10px] opacity-70 truncate">{{ cat.desc }}</span>
                         </button>
@@ -253,17 +241,10 @@ const handleFileChange = (event: Event) => {
                     which cleanly resets all local state (search, edit form, etc.)
                     without needing extra watchers.
                 -->
-                <JsonTable
-                    v-if="viewMode === 'table'"
-                    :key="activeCategory"
+                <JsonTable v-if="viewMode === 'table'" :key="activeCategory"
                     :title="categories.find(c => c.id === activeCategory)?.label ?? ''"
-                    :description="categories.find(c => c.id === activeCategory)?.desc"
-                    v-model:data="categoryData"
-                />
-                <JsonEditor
-                    v-else
-                    v-model:data="fullReplacementTable"
-                />
+                    :description="categories.find(c => c.id === activeCategory)?.desc" v-model:data="categoryData" />
+                <JsonEditor v-else v-model:data="fullReplacementTable" />
             </div>
         </div>
 
@@ -276,11 +257,7 @@ const handleFileChange = (event: Event) => {
                 </DialogHeader>
                 <div class="space-y-2 py-2">
                     <label class="text-sm font-medium">Name</label>
-                    <Input
-                        v-model="newDictName"
-                        placeholder="My Custom Dictionary"
-                        @keydown.enter="handleCreate"
-                    />
+                    <Input v-model="newDictName" placeholder="My Custom Dictionary" @keydown.enter="handleCreate" />
                 </div>
                 <DialogFooter>
                     <Button variant="ghost" @click="showCreateModal = false">Cancel</Button>

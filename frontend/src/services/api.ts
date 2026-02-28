@@ -59,5 +59,9 @@ export const api = {
 
     async deleteDictionary(id: number) {
         return axios.delete(`${API_URL}/dictionaries/${id}`);
+    },
+
+    async setDefaultDictionary(id: number) {
+        return axios.put<Dictionary>(`${API_URL}/dictionaries/${id}/set-default`);
     }
 };

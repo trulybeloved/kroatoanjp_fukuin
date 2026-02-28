@@ -61,7 +61,10 @@ export const useAppStore = defineStore('app', {
         async saveCurrentDictionary() {
             if (!this.currentDictionary) return;
             try {
-                const contentStr = JSON.stringify(this.replacementTable, null, 2);
+                const obj = typeof this.replacementTable === 'string'
+                    ? JSON.parse(this.replacementTable)
+                    : this.replacementTable;
+                const contentStr = JSON.stringify(obj, null, 2);
                 await api.updateDictionary(this.currentDictionary.id, this.currentDictionary.name, contentStr);
                 // Refresh
                 await this.selectDictionary(this.currentDictionary.id);
@@ -97,6 +100,19 @@ export const useAppStore = defineStore('app', {
                 return response.data;
             } catch (e) {
                 console.error("Failed to create dictionary", e);
+                throw e;
+            }
+        },
+
+        async setDefaultDictionary(id: number) {
+            try {
+                await api.setDefaultDictionary(id);
+                this.dictionaries.forEach(d => { d.is_default = d.id === id; });
+                if (this.currentDictionary) {
+                    this.currentDictionary.is_default = this.currentDictionary.id === id;
+                }
+            } catch (e) {
+                console.error("Failed to set default dictionary", e);
                 throw e;
             }
         },
