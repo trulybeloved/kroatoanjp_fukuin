@@ -53,6 +53,7 @@ class MTL_Preprocess:
             replacement = {}
         self.rep = replacement
         self.total_replacements = 0
+        self.replacement_log = []
         self.verbose = verbose
         self.single_kanji_filter = single_kanji_filter
         
@@ -111,19 +112,36 @@ class MTL_Preprocess:
     def replace_name(self, character,
                      replace=Names.FULL_NAME,
                      no_honorific=Names.ALL_NAMES,
-                     replaced_names=list()):
+                     replaced_names=list(),
+                     category=""):
         for nen, njp, no_honor in self.loop_names(character, replace, no_honorific):
             if njp in replaced_names:
                 continue
             data = dict()
             for hon, hon_en in self.rep['honorifics'].items():
-                data[hon_en] = self.replace_single_word(
+                n = self.replace_single_word(
                     f'{njp}{hon}',
                     f'{nen}-{hon_en}'
                 )
+                data[hon_en] = n
+                if n > 0:
+                    self.replacement_log.append({
+                        "category": category,
+                        "original": f'{njp}{hon}',
+                        "replacement": f'{nen}-{hon_en}',
+                        "count": n
+                    })
             if no_honor:
                 if len(njp) > 1 or not self.single_kanji_filter:
-                    data['NA'] = self.replace_single_word(njp, nen)
+                    n = self.replace_single_word(njp, nen)
+                    data['NA'] = n
+                    if n > 0:
+                        self.replacement_log.append({
+                            "category": category,
+                            "original": njp,
+                            "replacement": nen,
+                            "count": n
+                        })
 
             total = sum(data.values())
             replaced_names[njp] = total
@@ -161,7 +179,7 @@ class MTL_Preprocess:
                         if not isinstance(v, list):
                             v = [v]
                         char = Character(" ".join(v), k)
-                        self.replace_name(char, rule[3], rule[4], replaced_names)
+                        self.replace_name(char, rule[3], rule[4], replaced_names, category=rule[1])
                 except KeyError:
                     continue
             else:
@@ -170,6 +188,12 @@ class MTL_Preprocess:
                         n = self.replace_single_word(k, v)
                         if n > 0:
                             print(f'    {k} → {v}:{n}')
+                            self.replacement_log.append({
+                                "category": rule[1],
+                                "original": k,
+                                "replacement": v,
+                                "count": n
+                            })
                 except KeyError:
                     continue
             print(f'  SubTotal: {self.total_replacements-prev_count}')

@@ -22,9 +22,17 @@ export interface DictionaryHistoryDetail extends DictionaryHistoryEntry {
     content: string;
 }
 
+export interface ReplacementDetail {
+    category: string;
+    original: string;
+    replacement: string;
+    count: number;
+}
+
 export interface PreprocessResponse {
     text: string;
     total_replacements: number;
+    replacements: ReplacementDetail[];
 }
 
 export interface PreprocessRequest {

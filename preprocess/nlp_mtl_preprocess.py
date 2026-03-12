@@ -86,6 +86,7 @@ class NLP_MTL_Preprocess:
             replacement_table = {}
         self.replacement_table = replacement_table
         self.total_replacements = 0
+        self.replacement_log = []
         self.verbose = verbose
         # When single_kanji_filter is True, script will not make replacements 
         # for single-kanji names if the kanji is not followed by an honorific,
@@ -193,11 +194,12 @@ class NLP_MTL_Preprocess:
                    Names.LAST_NAME in honorific)
 
 
-    def replace_name(self, 
-                character: Character, 
-                replace: Names, 
-                no_honorific: Names, 
-                replaced_names: dict
+    def replace_name(self,
+                character: Character,
+                replace: Names,
+                no_honorific: Names,
+                replaced_names: dict,
+                category: str = ""
             ):
         for en_name, jp_name, no_honor in self.loop_names(character, replace, no_honorific):
             if jp_name in replaced_names:
@@ -210,10 +212,18 @@ class NLP_MTL_Preprocess:
                 # jp_honorific (str): en_honorific (str)
                 # "先輩": "senpai"
                 for jp_honorific, en_honorific in honorifics_replacements.items():
-                    honorifics_replacement_counts[en_honorific] = self.replace_tokenized_phrase(
+                    n = self.replace_tokenized_phrase(
                         f'{jp_name}{jp_honorific}',
                         f'{en_name}-{en_honorific}'
                     )
+                    honorifics_replacement_counts[en_honorific] = n
+                    if n > 0:
+                        self.replacement_log.append({
+                            "category": category,
+                            "original": f'{jp_name}{jp_honorific}',
+                            "replacement": f'{en_name}-{en_honorific}',
+                            "count": n
+                        })
             # The presence of honorifics is a good sanity check for whether the
             # string being replaced is a name or not. If there are no honorifics
             # and single_kanji_filter is True, single kanji names will not be
@@ -221,14 +231,30 @@ class NLP_MTL_Preprocess:
             # replacements
             if no_honor:
                 if len(jp_name) > 1:
-                    honorifics_replacement_counts['NA'] = self.replace_tokenized_phrase(jp_name, en_name)
+                    n = self.replace_tokenized_phrase(jp_name, en_name)
+                    honorifics_replacement_counts['NA'] = n
+                    if n > 0:
+                        self.replacement_log.append({
+                            "category": category,
+                            "original": jp_name,
+                            "replacement": en_name,
+                            "count": n
+                        })
                 elif not self.single_kanji_filter:
                     # Allow replacing single kanji words that have been tagged
                     # as being proper nouns.
-                    honorifics_replacement_counts['NA'] = self.replace_tokenized_single_word(
+                    n = self.replace_tokenized_single_word(
                         Word(jp_name, PartOfSpeech.PROPER_NOUN),
                         en_name
                     )
+                    honorifics_replacement_counts['NA'] = n
+                    if n > 0:
+                        self.replacement_log.append({
+                            "category": category,
+                            "original": jp_name,
+                            "replacement": en_name,
+                            "count": n
+                        })
             total = sum(honorifics_replacement_counts.values())
             replaced_names[jp_name] = total
             if total > 0: 
@@ -277,12 +303,18 @@ class NLP_MTL_Preprocess:
                         if isinstance(jp_name, list):
                             jp_name = " ".join(jp_name)
                         char = Character(jp_name, en_name)
-                        self.replace_name(char, rule.replace_name, rule.no_honorifics, replaced_names)
+                        self.replace_name(char, rule.replace_name, rule.no_honorifics, replaced_names, category=rule.json_key)
                 else:
                    for old_word, replacement in self.replacement_table[rule.json_key].items():
                         n = self.replace_single_word(old_word, replacement)
                         if n > 0:
                             self._log(f'    {old_word} → {replacement}:{n}')
+                            self.replacement_log.append({
+                                "category": rule.json_key,
+                                "original": old_word,
+                                "replacement": replacement,
+                                "count": n
+                            })
             prev_rule = rule
             self._log(f'  SubTotal: {self.total_replacements-prev_count}')
 

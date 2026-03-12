@@ -50,9 +50,16 @@ class NLPPreprocessRequest(BaseModel):
     use_single_kanji_filter: bool = False
     verbose: bool = False
 
+class ReplacementDetail(BaseModel):
+    category: str
+    original: str
+    replacement: str
+    count: int
+
 class PreprocessResponse(BaseModel):
     text: str
     total_replacements: int
+    replacements: List[ReplacementDetail] = []
 
 class DictionaryModel(BaseModel):
     id: int
@@ -121,7 +128,8 @@ async def preprocess_basic(request: BasicPreprocessRequest):
         preprocessed_text = preprocess.replace()
         return PreprocessResponse(
             text=preprocessed_text,
-            total_replacements=preprocess.total_replacements
+            total_replacements=preprocess.total_replacements,
+            replacements=preprocess.replacement_log
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -150,7 +158,8 @@ async def preprocess_nlp(request: NLPPreprocessRequest):
         preprocessed_text = preprocess.replace()
         return PreprocessResponse(
             text=preprocessed_text,
-            total_replacements=preprocess.total_replacements
+            total_replacements=preprocess.total_replacements,
+            replacements=preprocess.replacement_log
         )
     except HTTPException as he:
         raise he
