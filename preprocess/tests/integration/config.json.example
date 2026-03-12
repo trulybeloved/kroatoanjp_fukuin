@@ -1,0 +1,5 @@
+{
+    "preprocessor": "basic",
+    "replacement_table": "replacement_table/yourfile.json",
+    "single_kanji_filter": true
+}
