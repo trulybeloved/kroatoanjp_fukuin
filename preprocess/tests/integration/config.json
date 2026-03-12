@@ -1,0 +1,9 @@
+{
+    "preprocessor": "nlp",
+    "tokenizer": "spacy",
+    "replacement_table": "replacement_table/rezero.json",
+    "tag_potential_proper_nouns": true,
+    "single_kanji_filter": true,
+    "use_user_dict": true,
+    "user_dict_path": "data/dictionaries/rezero-sudachi.dic"
+}
