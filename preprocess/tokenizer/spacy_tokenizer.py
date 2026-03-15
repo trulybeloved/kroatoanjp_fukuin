@@ -2,7 +2,7 @@ import os
 import os.path
 import json
 from tempfile import NamedTemporaryFile
-from typing import Optional, List
+from typing import Dict, Optional, List
 
 import spacy
 import sudachipy.tokenizer
@@ -10,7 +10,7 @@ from sudachipy import dictionary
 
 from preprocess.tokenizer.sudachi_tokenizer import SudachiTokenizer
 from preprocess.sentence import Word
-from preprocess.tokenizer.part_of_speech import PartOfSpeech
+from preprocess.tokenizer.part_of_speech import PartOfSpeech, SPACY_ENGLISH_POS_MAP
 from preprocess.utils import is_punctuation
 
 # spaCy (https://spacy.io/) uses Sudachi for tokenization for its JP
@@ -71,6 +71,22 @@ class SpacyTokenizer(SudachiTokenizer):
                 part_of_speech = part_of_speech_tuple[1]
             word_list.append(Word(word_text, part_of_speech))
         return word_list
+
+    def analyze(self, text: str) -> List[Dict]:
+        results = []
+        for word in self._tagger(text):
+            pos_english = SPACY_ENGLISH_POS_MAP.get(word.pos_, "Other")
+            raw_pos = word.tag_
+            reading_list = word.morph.get("Reading")
+            reading = reading_list[0] if reading_list else None
+            results.append({
+                "text": word.text,
+                "pos": pos_english,
+                "lemma": word.lemma_,
+                "reading": reading,
+                "raw_pos": raw_pos,
+            })
+        return results
 
 # https://github.com/explosion/spaCy/blob/b69d249a223fa4e633e11babc0830f3b68df57e2/spacy/lang/ja/tag_map.py
 # https://github.com/explosion/spaCy/blob/b69d249a223fa4e633e11babc0830f3b68df57e2/spacy/lang/ja/tag_orth_map.py

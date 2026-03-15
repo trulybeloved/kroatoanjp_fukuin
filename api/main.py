@@ -61,6 +61,21 @@ class PreprocessResponse(BaseModel):
     total_replacements: int
     replacements: List[ReplacementDetail] = []
 
+class TokenizeRequest(BaseModel):
+    sentence: str
+    tokenizer: str = "spacy"  # spacy or sudachi
+
+class TokenInfo(BaseModel):
+    text: str
+    pos: str
+    lemma: Optional[str] = None
+    reading: Optional[str] = None
+    raw_pos: Optional[str] = None
+
+class TokenizeResponse(BaseModel):
+    tokens: List[TokenInfo]
+    tokenizer: str
+
 class DictionaryModel(BaseModel):
     id: int
     name: str
@@ -161,6 +176,25 @@ async def preprocess_nlp(request: NLPPreprocessRequest):
             total_replacements=preprocess.total_replacements,
             replacements=preprocess.replacement_log
         )
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/tokenize", response_model=TokenizeResponse)
+async def tokenize(request: TokenizeRequest):
+    if request.tokenizer not in ("spacy", "sudachi"):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported tokenizer: {request.tokenizer}. Use 'spacy' or 'sudachi'."
+        )
+    try:
+        tok = get_tokenizer(request.tokenizer, False, None)
+        token_dicts = tok.analyze(request.sentence)
+        tokens = [TokenInfo(**t) for t in token_dicts]
+        return TokenizeResponse(tokens=tokens, tokenizer=request.tokenizer)
     except HTTPException as he:
         raise he
     except Exception as e:

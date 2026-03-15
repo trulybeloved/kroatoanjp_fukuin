@@ -74,6 +74,7 @@ uvicorn api.main:app --host 0.0.0.0 --port 8000
 - **GET `/health`**: Check if the server is running.
 - **POST `/preprocess/basic`**: Simple replacement.
 - **POST `/preprocess/nlp`**: Tokenization-aware replacement.
+- **POST `/tokenize`**: Tokenize a Japanese sentence and return per-token morphological analysis (POS, reading, lemma).
 
 Interactive documentation is available at `http://localhost:8000/docs` once the server is started. Detailed documentation can be found in [API_DOCUMENTATION.md](API_DOCUMENTATION.md).
 

@@ -2,13 +2,13 @@ import os
 import os.path
 import json
 from tempfile import NamedTemporaryFile
-from typing import Optional, List
+from typing import Dict, Optional, List
 
 from sudachipy import tokenizer, dictionary
 
 from preprocess.tokenizer.tokenizer import Tokenizer
 from preprocess.sentence import Word
-from preprocess.tokenizer.part_of_speech import PartOfSpeech
+from preprocess.tokenizer.part_of_speech import PartOfSpeech, UNIDIC_ENGLISH_POS_MAP
 from preprocess.utils import is_punctuation
 
 class SudachiTokenizer(Tokenizer):
@@ -48,6 +48,33 @@ class SudachiTokenizer(Tokenizer):
                 part_of_speech = part_of_speech_tuple[1]
             word_list.append(Word(word_text, part_of_speech))
         return word_list
+
+    def analyze(self, text: str) -> List[Dict]:
+        results = []
+        for word in self._tokenizer.tokenize(text, self._split_mode):
+            pos_tuple = word.part_of_speech()
+            raw_pos = "-".join(p for p in pos_tuple[:4] if p and p != "*")
+            primary = pos_tuple[0]
+            secondary = pos_tuple[1] if len(pos_tuple) > 1 else "*"
+            if primary == "名詞":
+                if secondary == "固有名詞":
+                    pos_english = "Proper Noun"
+                elif secondary == "数詞":
+                    pos_english = "Numeral"
+                elif secondary == "代名詞":
+                    pos_english = "Pronoun"
+                else:
+                    pos_english = "Noun"
+            else:
+                pos_english = UNIDIC_ENGLISH_POS_MAP.get(primary, "Other")
+            results.append({
+                "text": word.surface(),
+                "pos": pos_english,
+                "lemma": word.dictionary_form(),
+                "reading": word.reading_form(),
+                "raw_pos": raw_pos,
+            })
+        return results
 
     def _generate_temporary_sudachi_config_file(self) -> str:
         sudachi_config = {
