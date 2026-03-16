@@ -214,6 +214,15 @@ async def list_dictionaries():
     conn.close()
     return [dict(ix) for ix in dictionaries]
 
+@app.get("/dictionaries/default", response_model=DictionaryModel)
+async def get_default_dictionary():
+    conn = get_db_connection()
+    dictionary = conn.execute('SELECT * FROM dictionaries WHERE is_default = 1').fetchone()
+    conn.close()
+    if dictionary is None:
+        raise HTTPException(status_code=404, detail="No default dictionary found")
+    return dict(dictionary)
+
 @app.get("/dictionaries/{id}", response_model=DictionaryModel)
 async def get_dictionary(id: int):
     conn = get_db_connection()

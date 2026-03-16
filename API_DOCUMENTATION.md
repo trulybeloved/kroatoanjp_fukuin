@@ -224,10 +224,255 @@ The `replacement_table` is a dictionary with specific keys:
 
 ---
 
+### 5. List Dictionaries
+Retrieves all custom dictionaries stored in the system.
+
+- **URL**: `/dictionaries`
+- **Method**: `GET`
+- **Response Body**:
+    - Array of dictionary objects, each containing:
+        - `id` (integer): Unique dictionary identifier.
+        - `name` (string): Dictionary name.
+        - `is_default` (boolean): Whether this is the default dictionary.
+        - `content` (string): Dictionary content (JSON or text format).
+        - `created_at` (string): ISO 8601 timestamp of creation.
+        - `updated_at` (string): ISO 8601 timestamp of last update.
+
+**Example Response**:
+```json
+[
+  {
+    "id": 1,
+    "name": "Default Dictionary",
+    "is_default": true,
+    "content": "{\"names\": {...}}",
+    "created_at": "2026-03-16T10:00:00",
+    "updated_at": "2026-03-16T10:30:00"
+  }
+]
+```
+
+### 6. Get Default Dictionary
+Retrieves the current default dictionary without needing to list all dictionaries.
+
+- **URL**: `/dictionaries/default`
+- **Method**: `GET`
+- **Response Body**:
+    - `id` (integer): Unique dictionary identifier.
+    - `name` (string): Dictionary name.
+    - `is_default` (boolean): Always true.
+    - `content` (string): Dictionary content.
+    - `created_at` (string): ISO 8601 timestamp of creation.
+    - `updated_at` (string): ISO 8601 timestamp of last update.
+- **Error Responses**:
+    - `404 Not Found`: No default dictionary has been set.
+
+**Example Request (`curl`)**:
+```bash
+curl -X GET "http://localhost:8000/dictionaries/default"
+```
+
+**Example Response**:
+```json
+{
+  "id": 1,
+  "name": "Default Dictionary",
+  "is_default": true,
+  "content": "{\"names\": {...}}",
+  "created_at": "2026-03-16T10:00:00",
+  "updated_at": "2026-03-16T10:30:00"
+}
+```
+
+### 7. Get Dictionary
+Retrieves a specific dictionary by ID.
+
+- **URL**: `/dictionaries/{id}`
+- **Method**: `GET`
+- **Path Parameters**:
+    - `id` (integer): Dictionary ID.
+- **Response Body**:
+    - `id` (integer): Unique dictionary identifier.
+    - `name` (string): Dictionary name.
+    - `is_default` (boolean): Whether this is the default dictionary.
+    - `content` (string): Dictionary content.
+    - `created_at` (string): ISO 8601 timestamp of creation.
+    - `updated_at` (string): ISO 8601 timestamp of last update.
+- **Error Responses**:
+    - `404 Not Found`: Dictionary with the specified ID does not exist.
+
+**Example Request (`curl`)**:
+```bash
+curl -X GET "http://localhost:8000/dictionaries/1"
+```
+
+### 8. Create Dictionary
+Creates a new custom dictionary.
+
+- **URL**: `/dictionaries`
+- **Method**: `POST`
+- **Request Body**:
+    - `name` (string, required): Name for the new dictionary.
+    - `content` (string, required): Dictionary content (JSON object recommended for replacement tables).
+- **Response Body**:
+    - `id` (integer): Unique dictionary identifier (auto-generated).
+    - `name` (string): Dictionary name.
+    - `is_default` (boolean): Whether this is the default dictionary (false for new dictionaries).
+    - `content` (string): Dictionary content.
+    - `created_at` (string): ISO 8601 timestamp of creation.
+    - `updated_at` (string): ISO 8601 timestamp of last update.
+- **Error Responses**:
+    - `400 Bad Request`: Dictionary with this name already exists.
+
+**Example Request (`curl`)**:
+```bash
+curl -X POST "http://localhost:8000/dictionaries" \
+     -H "Content-Type: application/json" \
+     -d '{"name": "My Custom Dictionary", "content": "{\"names\": {\"Character\": \"キャラクター\"}}"}'
+```
+
+### 9. Update Dictionary
+Updates an existing dictionary's name and/or content.
+
+- **URL**: `/dictionaries/{id}`
+- **Method**: `PUT`
+- **Path Parameters**:
+    - `id` (integer): Dictionary ID.
+- **Request Body**:
+    - `name` (string, optional): New name for the dictionary.
+    - `content` (string, optional): Updated dictionary content.
+- **Response Body**:
+    - `id` (integer): Unique dictionary identifier.
+    - `name` (string): Dictionary name.
+    - `is_default` (boolean): Whether this is the default dictionary.
+    - `content` (string): Updated dictionary content.
+    - `created_at` (string): ISO 8601 timestamp of creation.
+    - `updated_at` (string): ISO 8601 timestamp of last update.
+- **Error Responses**:
+    - `404 Not Found`: Dictionary with the specified ID does not exist.
+    - `400 Bad Request`: Dictionary name conflict or other validation error.
+
+**Example Request (`curl`)**:
+```bash
+curl -X PUT "http://localhost:8000/dictionaries/1" \
+     -H "Content-Type: application/json" \
+     -d '{"content": "{\"names\": {\"UpdatedName\": \"更新名前\"}}"}'
+```
+
+### 10. Set Default Dictionary
+Sets a dictionary as the default for the system. Only one dictionary can be default at a time.
+
+- **URL**: `/dictionaries/{id}/set-default`
+- **Method**: `PUT`
+- **Path Parameters**:
+    - `id` (integer): Dictionary ID to set as default.
+- **Response Body**:
+    - `id` (integer): Unique dictionary identifier.
+    - `name` (string): Dictionary name.
+    - `is_default` (boolean): Always true for the response.
+    - `content` (string): Dictionary content.
+    - `created_at` (string): ISO 8601 timestamp of creation.
+    - `updated_at` (string): ISO 8601 timestamp of last update.
+- **Error Responses**:
+    - `404 Not Found`: Dictionary with the specified ID does not exist.
+
+**Example Request (`curl`)**:
+```bash
+curl -X PUT "http://localhost:8000/dictionaries/1/set-default"
+```
+
+### 11. Get Dictionary History
+Retrieves all version history entries for a specific dictionary, ordered by version number (descending).
+
+- **URL**: `/dictionaries/{id}/history`
+- **Method**: `GET`
+- **Path Parameters**:
+    - `id` (integer): Dictionary ID.
+- **Response Body**:
+    - Array of history entries, each containing:
+        - `id` (integer): History entry ID.
+        - `dictionary_id` (integer): The dictionary ID this entry belongs to.
+        - `version_number` (integer): Version number of this entry.
+        - `created_at` (string): ISO 8601 timestamp of when this version was created.
+- **Error Responses**:
+    - `404 Not Found`: Dictionary with the specified ID does not exist.
+
+**Example Response**:
+```json
+[
+  {
+    "id": 3,
+    "dictionary_id": 1,
+    "version_number": 3,
+    "created_at": "2026-03-16T10:45:00"
+  },
+  {
+    "id": 2,
+    "dictionary_id": 1,
+    "version_number": 2,
+    "created_at": "2026-03-16T10:30:00"
+  }
+]
+```
+
+### 12. Get Dictionary History Version
+Retrieves the content of a specific version from a dictionary's history.
+
+- **URL**: `/dictionaries/{dict_id}/history/{version_id}`
+- **Method**: `GET`
+- **Path Parameters**:
+    - `dict_id` (integer): Dictionary ID.
+    - `version_id` (integer): History entry ID.
+- **Response Body**:
+    - `id` (integer): History entry ID.
+    - `dictionary_id` (integer): The dictionary ID this entry belongs to.
+    - `version_number` (integer): Version number of this entry.
+    - `content` (string): The dictionary content at this version.
+    - `created_at` (string): ISO 8601 timestamp of when this version was created.
+- **Error Responses**:
+    - `404 Not Found`: History entry not found or does not belong to the specified dictionary.
+
+**Example Request (`curl`)**:
+```bash
+curl -X GET "http://localhost:8000/dictionaries/1/history/2"
+```
+
+**Example Response**:
+```json
+{
+  "id": 2,
+  "dictionary_id": 1,
+  "version_number": 2,
+  "content": "{\"names\": {\"Character\": \"キャラクター\"}}",
+  "created_at": "2026-03-16T10:30:00"
+}
+```
+
+### 13. Delete Dictionary
+Deletes a dictionary. The default dictionary cannot be deleted.
+
+- **URL**: `/dictionaries/{id}`
+- **Method**: `DELETE`
+- **Path Parameters**:
+    - `id` (integer): Dictionary ID to delete.
+- **Response Body**:
+    - `status` (string): Confirmation message, typically `"deleted"`.
+- **Error Responses**:
+    - `404 Not Found`: Dictionary with the specified ID does not exist.
+    - `400 Bad Request`: Cannot delete the default dictionary.
+
+**Example Request (`curl`)**:
+```bash
+curl -X DELETE "http://localhost:8000/dictionaries/1"
+```
+
+---
+
 ## Error Handling
 
 The API returns standard HTTP status codes:
 - `200 OK`: Success.
 - `400 Bad Request`: Validation errors or unsupported tokenizer.
+- `404 Not Found`: Resource not found.
 - `422 Unprocessable Entity`: Request format errors (Pydantic validation).
 - `500 Internal Server Error`: Unexpected server-side errors.
