@@ -63,7 +63,7 @@ class PreprocessResponse(BaseModel):
 
 class TokenizeRequest(BaseModel):
     sentence: str
-    tokenizer: str = "spacy"  # spacy or sudachi
+    tokenizer: str = "spacy"  # spacy, sudachi, or fugashi
 
 class TokenInfo(BaseModel):
     text: str
@@ -185,10 +185,10 @@ async def preprocess_nlp(request: NLPPreprocessRequest):
 
 @app.post("/tokenize", response_model=TokenizeResponse)
 async def tokenize(request: TokenizeRequest):
-    if request.tokenizer not in ("spacy", "sudachi"):
+    if request.tokenizer not in ("spacy", "sudachi", "fugashi"):
         raise HTTPException(
             status_code=400,
-            detail=f"Unsupported tokenizer: {request.tokenizer}. Use 'spacy' or 'sudachi'."
+            detail=f"Unsupported tokenizer: {request.tokenizer}. Use 'spacy', 'sudachi', or 'fugashi'."
         )
     try:
         tok = get_tokenizer(request.tokenizer, False, None)
