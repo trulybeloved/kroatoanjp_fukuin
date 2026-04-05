@@ -164,4 +164,3 @@ cython_debug/
 .idea/
 
 frontend/node_modules
-fukuin.db
